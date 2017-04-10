@@ -10,22 +10,17 @@ if (!extension_loaded('redis')) {
 	$redis->connect('127.0.0.1', 6379);
 	$redis->auth('123456');
 
+	$key    = "localhost";
+	$limit  = 10;
+	$expire = 60;
+
+	// init
 	$rateLimiter = new RateLimiter($redis);
 
-	// use simpleLimitCall
-	$key    = "localhost";
-	$limit  = 10;
-	$expire = 60;
-
-	$rateLimiterRes = $rateLimiter->simpleLimitCall($key, $limit, $expire);
-
+	// use simpleLimit
+	$rateLimiterRes = $rateLimiter->simpleLimit($key, $limit, $expire);
 	echo $rateLimiterRes;
 
-	// use strictLimitCall
-	$key    = "localhost";
-	$limit  = 10;
-	$expire = 60;
-
-	$rateLimiterRes = $rateLimiter->simpleLimitCall($key, $limit, $expire);
-
+	// use strictLimit
+	$rateLimiterRes = $rateLimiter->strictLimit($key, $limit, $expire);
 	echo $rateLimiterRes;

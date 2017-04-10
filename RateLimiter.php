@@ -16,16 +16,16 @@ class RateLimiter
 	 * @param  integer $expire [limited period (seconds)]
 	 * @return [boolean]       [true if pass the limit, false if fail limit]
 	 */
-	public function simpleLimitCall($key = "", $limit = 10, $expire = 1)
+	public function simpleLimit($key = "", $limit = 10, $expire = 1)
 	{
 		$current = $this->redis->get($key);
 		
-		if ($current != null && $current >= $limit) {
+		if ($current && $current >= $limit) {
 			return false;
 		} else {
 			$ttl = $this->redis->ttl($key);
 			
-			$this->redis->multi(\Redis::MULTI);
+			$this->redis->multi();
 			$this->redis->incr($key);
 			
 			if ($ttl < 0) {
@@ -45,7 +45,7 @@ class RateLimiter
 	 * @param  integer $expire [limited period (seconds)]
 	 * @return [boolean]       [true if pass the limit, false if fail limit]
 	 */
-	public function strictLimitCall($key = "", $limit = 10, $expire = 1)
+	public function strictLimit($key = "", $limit = 10, $expire = 1)
 	{
 		$length = $this->redis->lLen($key);
 
@@ -57,7 +57,7 @@ class RateLimiter
 			if ($now - $time < $expire) {
 				return false;
 			} else {
-				$this->redis->multi(\Redis::MULTI);
+				$this->redis->multi();
 
 				$this->redis->lPush($key, $now);
 				$this->redis->Ltrim($key, 0, $limit - 1);
