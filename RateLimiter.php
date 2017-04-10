@@ -68,7 +68,7 @@ class RateLimiter
 				return true;
 			}
 		} else {
-			$this->redis->multi(\Redis::MULTI);
+			$this->redis->multi();
 
 			$this->redis->lPush($key, $now);
 			$this->redis->expire($key, $expire);
